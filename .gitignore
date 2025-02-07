@@ -1,3 +1,10 @@
+# Project folders
+input_media/
+models/
+output_media/
+detect/
+model_training/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
