@@ -2,6 +2,7 @@ from utils import *
 from trackers import *
 from court_detector import *
 import os
+import time
 
 def main():
     # Read video
@@ -10,7 +11,7 @@ def main():
 
     # Detect players and ball
     player_tracker = PlayerTracker(model_path="models/yolo11n.pt")
-    ball_tracker = BallTracker(model_path="models/yolov5_ball_best.pt") # yolov5 best best model
+    ball_tracker = BallTracker(model_path="model_training/20250207_ball_yolov5n6u/weights/best.pt") # try fridays v5n trained
 
     player_detections = player_tracker.detect_frames(video_frames, read_from_stub=False, stub_path="tracker_stubs/player_detections.pkl")
     ball_detections = ball_tracker.detect_frames(video_frames, read_from_stub=False, stub_path="tracker_stubs/ball_detections.pkl")
@@ -20,9 +21,6 @@ def main():
     court_detector = CourtDetector(is_manual=True)
     court_keypoints = court_detector.create_keypoints(video_frames[0], save_path="tracker_stubs/court_keypoints.json")
     
-    # Print or process the court keypoints
-    print("Manual Court Keypoints:", court_keypoints)
-
     # Draw bounding boxes around players and ball
     output_video_frames = player_tracker.draw_bounding_boxes(video_frames, player_detections)
     output_video_frames = ball_tracker.draw_bounding_boxes(output_video_frames, ball_detections)
@@ -41,4 +39,8 @@ def main():
     save_video(output_video_frames, output_video_path)
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Execution time: {elapsed_time:.2f} seconds")
