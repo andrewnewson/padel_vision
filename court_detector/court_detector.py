@@ -21,7 +21,8 @@ class CourtDetector():
     def click_event(self, event, x, y, flags, param):
         """Handles mouse click events to store selected keypoints."""
         if event == cv2.EVENT_LBUTTONDOWN:
-            param[0].append((x, y))  # Append the keypoint to the list
+            # param[0].append((x, y))  # Append the keypoint to the list
+            param[0].extend([x, y])  # method to match tennis_vision
             font = cv2.FONT_HERSHEY_SIMPLEX
             cv2.putText(param[1], f"{x},{y}", (x, y), font, 1, (255, 0, 0), 2)
             cv2.imshow("Select Court Keypoints", param[1])
