@@ -3,6 +3,7 @@ models/
 detect/
 model_training/
 output_media/
+revert_venv/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -141,7 +142,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-.venv310/
+.venv*/
 
 # Spyder project settings
 .spyderproject
