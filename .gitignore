@@ -6,6 +6,9 @@ output_media/
 revert_venv/
 notebooks/
 
+# Extra files
+input_media/padel_ten.mp4
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
