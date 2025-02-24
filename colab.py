@@ -7,7 +7,7 @@ import cv2
 
 def main():
     # Read video
-    input_video_path = "./input_media/padel_point.mp4"
+    input_video_path = "./input_media/padel_ten.mp4"
     video_frames = read_video(input_video_path)
 
     # Detect players and ball
