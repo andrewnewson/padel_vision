@@ -5,7 +5,7 @@ from ultralytics import NAS, YOLO
 # model = NAS('models/yolo_nas_s.pt')
 # model = YOLO('models/yolov5nu.pt')
 
-model = YOLO("C:\\Users\\AndrewNewson\\Downloads\\best (4).pt")
+model = YOLO("./models/yolov5n6u_ball.pt")
 
 for result in model.track(source='input_media/padel_point.mp4', stream=True):
     frame = result.plot()

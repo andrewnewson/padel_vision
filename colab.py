@@ -14,8 +14,8 @@ def main():
     player_tracker = PlayerTracker(model_path="./models/yolo11n.pt")
     ball_tracker = BallTracker(model_path="./models/yolov5n6u_ball.pt")
 
-    player_detections = player_tracker.detect_frames(video_frames, read_from_stub=True, stub_path="./tracker_stubs/player_detections.pkl")
-    ball_detections = ball_tracker.detect_frames(video_frames, read_from_stub=True, stub_path="./tracker_stubs/ball_detections.pkl")
+    player_detections = player_tracker.detect_frames(video_frames, read_from_stub=False, stub_path="./tracker_stubs/player_detections.pkl")
+    ball_detections = ball_tracker.detect_frames(video_frames, read_from_stub=False, stub_path="./tracker_stubs/ball_detections.pkl")
     ball_detections = ball_tracker.interpolate_ball_position(ball_detections)
 
     # # Detect court lines (choice of manual or auto detection) (pass first frame of video)

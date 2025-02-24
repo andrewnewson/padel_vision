@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 def main():
     # Read video (simulating a live video feed)
-    input_video_path = "input_media/padel_point.mp4"
+    input_video_path = "./input_media/padel_point.mp4"
     cap = cv2.VideoCapture(input_video_path)
 
     if not cap.isOpened():
@@ -17,8 +17,8 @@ def main():
         return
 
     # Instantiate models
-    player_tracker = PlayerTracker(model_path="models/yolo11n.pt")
-    ball_tracker = BallTracker(model_path="model_training/20250207_ball_yolov5n6u/weights/best.pt")
+    player_tracker = PlayerTracker(model_path="./models/yolo11n.pt")
+    ball_tracker = BallTracker(model_path="./models/yolov5n6u_ball.pt")
     court_detector = CourtDetector(is_manual=True)
 
     # Get the first frame to detect court keypoints
@@ -27,7 +27,7 @@ def main():
         print("Error: Could not read first frame.")
         return
 
-    court_keypoints = court_detector.create_keypoints(first_frame, save_path="tracker_stubs/court_keypoints.json")
+    court_keypoints = court_detector.create_keypoints(first_frame, save_path="./tracker_stubs/court_keypoints.json")
     print("Manual Court Keypoints:", court_keypoints)
 
     # Prepare for real-time processing
