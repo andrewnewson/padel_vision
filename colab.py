@@ -3,6 +3,7 @@ from trackers import *
 from court_detector import *
 import os
 import time
+import cv2
 
 def main():
     # Read video
@@ -11,22 +12,22 @@ def main():
 
     # Detect players and ball
     player_tracker = PlayerTracker(model_path="./models/yolo11n.pt")
-    ball_tracker = BallTracker(model_path="./model_training/20250207_ball_yolov5n6u/weights/best.pt")
+    ball_tracker = BallTracker(model_path="./models/yolov5n6u_ball.pt")
 
     player_detections = player_tracker.detect_frames(video_frames, read_from_stub=True, stub_path="./tracker_stubs/player_detections.pkl")
     ball_detections = ball_tracker.detect_frames(video_frames, read_from_stub=True, stub_path="./tracker_stubs/ball_detections.pkl")
     ball_detections = ball_tracker.interpolate_ball_position(ball_detections)
 
     # # Detect court lines (choice of manual or auto detection) (pass first frame of video)
-    # court_detector = CourtDetector(is_manual=True)
-    # court_keypoints = court_detector.create_keypoints(video_frames[0], save_path="./tracker_stubs/court_keypoints.json")
+    court_detector = CourtDetector(is_manual=True)
+    court_keypoints = court_detector.create_keypoints(video_frames[0], save_path="./tracker_stubs/court_keypoints.json")
     
     # Draw bounding boxes around players and ball
     output_video_frames = player_tracker.draw_bounding_boxes(video_frames, player_detections)
     output_video_frames = ball_tracker.draw_bounding_boxes(output_video_frames, ball_detections)
 
     # Draw court lines
-    # output_video_frames = court_detector.draw_keypoints_on_video(output_video_frames, court_keypoints)
+    output_video_frames = court_detector.draw_keypoints_on_video(output_video_frames, court_keypoints)
 
     # Add frame number to video
     for i, frame in enumerate(output_video_frames):
