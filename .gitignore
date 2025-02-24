@@ -4,6 +4,7 @@ detect/
 model_training/
 output_media/
 revert_venv/
+notebooks/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
