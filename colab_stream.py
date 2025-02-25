@@ -33,9 +33,11 @@ def main():
         
         # Detect players and ball
         frame_player_detections = player_tracker.detect_frames([frame], read_from_stub=False, stub_path="./tracker_stubs/player_detections.pkl")
-        player_detections.extend(frame_player_detections)
+        if len(frame_player_detections) > 0:
+            player_detections.extend(frame_player_detections)
         frame_ball_detections = ball_tracker.detect_frames([frame], read_from_stub=False, stub_path="./tracker_stubs/ball_detections.pkl")
-        ball_detections.extend(frame_ball_detections)
+        if len(frame_ball_detections) > 0:
+            ball_detections.extend(frame_ball_detections)
         
         # Detect court lines
         # if frame_count == 0:  # Use the first frame to detect court keypoints
