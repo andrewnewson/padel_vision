@@ -18,7 +18,7 @@ def main():
     # Initialize trackers
     player_tracker = PlayerTracker(model_path="./models/yolo11n.pt")
     ball_tracker = BallTracker(model_path="./models/yolov5n6u_ball.pt")
-    court_detector = CourtDetector(is_manual=True)
+    # court_detector = CourtDetector(is_manual=True)
 
     # Initialise complete tracker lists
     player_detections = []
@@ -38,8 +38,8 @@ def main():
         ball_detections.extend(frame_ball_detections)
         
         # Detect court lines
-        if frame_count == 0:  # Use the first frame to detect court keypoints
-            court_keypoints = court_detector.create_keypoints(frame, save_path="./tracker_stubs/court_keypoints.json")
+        # if frame_count == 0:  # Use the first frame to detect court keypoints
+            # court_keypoints = court_detector.create_keypoints(frame, save_path="./tracker_stubs/court_keypoints.json")
         
         frame_count += 1
     
