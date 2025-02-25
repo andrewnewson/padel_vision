@@ -15,6 +15,8 @@ class PlayerTracker():
 
         player_dict = {}
         for box in results.boxes: # iterate through each detected box
+            if box.id is None:  # Check if track ID exists
+                continue  # Skip this box if no ID is assigned
             track_id = int(box.id.tolist()[0]) # get the track id of the object
             result = box.xyxy.tolist()[0] # get the bounding box coordinates
             object_cls_id = box.cls.tolist()[0] # get the class id of the object
