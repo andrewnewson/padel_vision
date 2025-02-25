@@ -8,37 +8,55 @@ import cv2
 def main():
     # Read video
     input_video_path = "./input_media/padel_ten.mp4"
-    video_frames = read_video(input_video_path)
 
-    # Initialize player and ball trackers
-    player_tracker = StreamPlayerTracker(model_path="./models/yolo11n.pt")
-    ball_tracker = StreamBallTracker(model_path="./models/yolov5n6u_ball.pt")
+    # Open video file with OpenCV
+    cap = cv2.VideoCapture(input_video_path)
+    if not cap.isOpened():
+        print(f"Error: Unable to open video {input_video_path}")
+        return
+    
+    # Initialize trackers
+    player_tracker = PlayerTracker(model_path="./models/yolo11n.pt")
+    ball_tracker = BallTracker(model_path="./models/yolov5n6u_ball.pt")
+    court_detector = CourtDetector(is_manual=True)
 
-    # Detect players and ball from the video frames
-    player_detections = player_tracker.detect_frames(video_frames, read_from_stub=True, stub_path="./tracker_stubs/player_detections.pkl")
-    ball_detections = ball_tracker.detect_frames(video_frames, read_from_stub=True, stub_path="./tracker_stubs/ball_detections.pkl")
+    # Initialise complete tracker lists
+    player_detections = []
+    ball_detections = []
+
+    # Process video frame by frame
+    frame_count = 0
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        
+        # Detect players and ball
+        frame_player_detections = player_tracker.detect_frames([frame], read_from_stub=False, stub_path="./tracker_stubs/player_detections.pkl")
+        player_detections.extend(frame_player_detections)
+        frame_ball_detections = ball_tracker.detect_frames([frame], read_from_stub=False, stub_path="./tracker_stubs/ball_detections.pkl")
+        ball_detections.extend(frame_ball_detections)
+        
+        # Detect court lines
+        if frame_count == 0:  # Use the first frame to detect court keypoints
+            court_keypoints = court_detector.create_keypoints(frame, save_path="./tracker_stubs/court_keypoints.json")
+        
+        frame_count += 1
+    
+    # Release resources
+    cap.release()
+
+    # Interpolate ball detections
     ball_detections = ball_tracker.interpolate_ball_position(ball_detections)
 
-    # Detect court lines (choice of manual or auto detection) (pass first frame of video)
-    court_detector = CourtDetector(is_manual=True)
-    court_keypoints = court_detector.create_keypoints(video_frames[0], save_path="./tracker_stubs/court_keypoints.json")
-    
-    # Draw bounding boxes around players and ball
-    output_video_frames = player_tracker.draw_bounding_boxes(video_frames, player_detections)
-    output_video_frames = ball_tracker.draw_bounding_boxes(output_video_frames, ball_detections)
-
-    # Draw court lines
-    output_video_frames = court_detector.draw_keypoints_on_video(output_video_frames, court_keypoints)
-
-    # Add frame number to video
-    for i, frame in enumerate(output_video_frames):
-        cv2.putText(frame, f"Frame {i}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-
-    # Save video with player detections and bounding boxes overlay
+    # Save detections
     _, file_name = os.path.split(input_video_path)
     name, _ = os.path.splitext(file_name)
-    output_video_path = f"./output_media/{name}_output.avi"
-    save_video(output_video_frames, output_video_path)
+    with open(f"./output_media/{name}_player_detections.json", "w") as f:
+        json.dump(player_detections, f)
+
+    with open(f"./output_media/{name}_ball_detections.json", "w") as f:
+        json.dump(ball_detections, f)
 
 if __name__ == "__main__":
     start_time = time.time()
