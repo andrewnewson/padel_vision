@@ -4,10 +4,11 @@ from court_detector import *
 import os
 import time
 import cv2
+import argparse
 
-def main():
+def main(input_video_path):
     # Read video
-    input_video_path = "./input_media/padel_point.mp4"
+    # input_video_path = "./input_media/padel_point.mp4"
     video_frames = read_video(input_video_path)
 
     # Detect players and ball
@@ -40,8 +41,12 @@ def main():
     save_video(output_video_frames, output_video_path)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process a video file for player and ball tracking.")
+    parser.add_argument("input_video_path", type=str, help="Path to the input video file")
+    args = parser.parse_args()
+
     start_time = time.time()
-    main()
+    main(args.input_video_path)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Execution time: {elapsed_time:.2f} seconds")
