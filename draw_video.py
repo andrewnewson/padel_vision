@@ -3,8 +3,9 @@ import cv2
 import json
 import argparse
 import time
+import yt_dlp
 
-def main(video_path, player_detections, ball_detections):
+def main(input_video, player_detections, ball_detections):
     # Load YOLO detections (list where each item is detections for a frame)
     with open(player_detections, "r") as file:
         player_detections = json.load(file)
@@ -12,8 +13,21 @@ def main(video_path, player_detections, ball_detections):
     with open(ball_detections, "r") as file:
         ball_detections = json.load(file)
 
+    if "youtube.com" in input_video:
+        # Extract direct stream URL from youtube
+        ydl_opts = {"format": "best[ext=mp4]"}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(input_video, download=False)
+            input_video_path = info_dict["url"]  # Direct stream URL
+        name = info_dict["id"]
+    else:
+        # Read video
+        input_video_path = input_video
+        _, file_name = os.path.split(input_video_path)
+        name, _ = os.path.splitext(file_name)
+
     # Open video
-    cap = cv2.VideoCapture(video_path)
+    cap = cv2.VideoCapture(input_video_path)
 
     # Get video properties
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -21,9 +35,8 @@ def main(video_path, player_detections, ball_detections):
     fps = cap.get(cv2.CAP_PROP_FPS)
 
     # Define codec and create VideoWriter object for AVI output
-    _, file_name = os.path.split(video_path)
-    name, _ = os.path.splitext(file_name)
-    output_path = f"/content/drive/MyDrive/Colab Notebooks/padel_vision/{name}_output.avi"
+    # output_path = f"/content/drive/MyDrive/Colab Notebooks/padel_vision/{name}_output.avi"
+    output_path = f"./output_media/{name}_output.avi"
     fourcc = cv2.VideoWriter_fourcc(*"XVID")  # Use XVID for AVI format
     out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
 
@@ -65,14 +78,14 @@ def main(video_path, player_detections, ball_detections):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Add bbox to a video file for player and ball tracking.")
-    parser.add_argument("video_path", type=str, help="Path to the input video file")
+    parser.add_argument("input_video", type=str, help="Path to the input video file")
     parser.add_argument("player_detections", type=str, help="Path to the player detections JSON file")
     parser.add_argument("ball_detections", type=str, help="Path to the ball detections JSON file")
 
     args = parser.parse_args()
 
     start_time = time.time()
-    main(args.video_path, args.player_detections, args.ball_detections)
+    main(args.input_video, args.player_detections, args.ball_detections)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Execution time: {elapsed_time:.2f} seconds")
