@@ -12,7 +12,7 @@ def main(input_video_path):
     video_frames = read_video(input_video_path)
 
     # Detect players and ball
-    player_tracker = PlayerTracker(model_path="./models/yolov5n6u.pt")
+    player_tracker = PlayerTracker(model_path="./models/yolov5nu.pt")
     ball_tracker = BallTracker(model_path="./models/yolov5n6u_ball.pt")
 
     player_detections = player_tracker.detect_frames(video_frames, read_from_stub=False, stub_path="./tracker_stubs/player_detections.pkl")
