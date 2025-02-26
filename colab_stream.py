@@ -16,7 +16,7 @@ def main():
         return
     
     # Initialize trackers
-    player_tracker = PlayerTracker(model_path="./models/yolo11n.pt")
+    player_tracker = PlayerTracker(model_path="./models/yolov5n6u.pt")
     ball_tracker = BallTracker(model_path="./models/yolov5n6u_ball.pt")
     # court_detector = CourtDetector(is_manual=True)
 
